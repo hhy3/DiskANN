@@ -68,7 +68,7 @@ template <typename T> class Distance
 
   protected:
     diskann::Metric _distance_metric;
-    size_t _alignment_factor = 8;
+    size_t _alignment_factor = 64;
 };
 
 class DistanceCosineInt8 : public Distance<int8_t>
