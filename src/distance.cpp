@@ -166,15 +166,16 @@ float DistanceL2Int8::compare(const int8_t *a, const int8_t *b, uint32_t size) c
 
 float DistanceL2UInt8::compare(const uint8_t *a, const uint8_t *b, uint32_t size) const
 {
-    uint32_t result = 0;
-#ifndef _WINDOWS
-#pragma omp simd reduction(+ : result) aligned(a, b : 64)
-#endif
-    for (int32_t i = 0; i < (int32_t)size; i++)
+    __m512i sum = _mm512_setzero_epi32();
+    for (uint i = 0; i < size; i += 64)
     {
-        result += ((int32_t)((int16_t)a[i] - (int16_t)b[i])) * ((int32_t)((int16_t)a[i] - (int16_t)b[i]));
+        auto xx = _mm512_loadu_si512(a + i);
+        auto yy = _mm512_loadu_si512(b + i);
+        auto t = _mm512_sub_epi8(xx, yy);
+        t = _mm512_abs_epi8(t);
+        asm("vpdpbusd %1, %2, %0" : "+x"(sum) : "mx"(xx), "x"(yy));
     }
-    return (float)result;
+    return _mm512_reduce_add_epi32(sum);
 }
 
 #ifndef _WINDOWS
