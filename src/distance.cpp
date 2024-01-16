@@ -173,7 +173,7 @@ float DistanceL2UInt8::compare(const uint8_t *a, const uint8_t *b, uint32_t size
         auto yy = _mm512_loadu_si512(b + i);
         auto t = _mm512_sub_epi8(xx, yy);
         t = _mm512_abs_epi8(t);
-        asm("vpdpbusd %1, %2, %0" : "+x"(sum) : "mx"(xx), "x"(yy));
+        asm("vpdpbusd %1, %2, %0" : "+x"(sum) : "mx"(t), "x"(t));
     }
     return _mm512_reduce_add_epi32(sum);
 }
