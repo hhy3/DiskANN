@@ -2382,6 +2382,9 @@ size_t Index<T, TagT, LabelT>::search_with_tags(const T *query, const uint64_t K
                 break;
         }
     }
+    for (size_t i = pos; i < K; ++i) {
+        tags[i] = 123456789;
+    }
 
     return pos;
 }
